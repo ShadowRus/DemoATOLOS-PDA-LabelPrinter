@@ -23,3 +23,18 @@ class Goods(Base):
     is_add_at = Column(String)
     is_manual = Column(Integer)
 
+
+class AddGoodsRespone(BaseModel):
+    goods_name: str=Field()
+    id_1: str=Field()
+    id_2:Optional[str]=None
+    id_3:Optional[str]=None
+    id_4:Optional[str]=None
+    id_5:Optional[str]=None
+    attr_1:Optional[str]=None
+    attr_2:Optional[str]=None
+    attr_3:Optional[str]=None
+    attr_4:Optional[str]=None
+    attr_5:Optional[str]=None
+    attr_6:Optional[str]=None
+

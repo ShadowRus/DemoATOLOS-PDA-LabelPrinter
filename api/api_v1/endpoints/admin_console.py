@@ -82,6 +82,8 @@ async def template(data:TemplateResponse,db: Session = Depends(deps.get_db)):
     except:
         return JSONResponse(status_code=500, content={'status': 'Error'})
 
+
+
 @router.post("/printer", summary="Добавляем принтер в БД",
              description="Отправка на сервер файла конфигурации ")
 async def printer(data:PrinterRespone,db: Session = Depends(deps.get_db)):
