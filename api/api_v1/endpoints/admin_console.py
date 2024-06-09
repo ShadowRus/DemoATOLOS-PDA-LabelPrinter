@@ -46,11 +46,11 @@ async def upload_file(file: UploadFile = File(...), db: Session = Depends(deps.g
         data = df.to_dict(orient='index')
         for row in data:
             goods = Goods(
-                id_1 = get_value_or_none(data[row],'Идентифкатор_1'),
-                id_2=get_value_or_none(data[row], 'Идентифкатор_2'),
-                id_3=get_value_or_none(data[row], 'Идентифкатор_3'),
-                id_4=get_value_or_none(data[row], 'Идентифкатор_4'),
-                id_5=get_value_or_none(data[row], 'Идентифкатор_5'),
+                id_1 = get_value_or_none(data[row],'Идентификатор_1'),
+                id_2=get_value_or_none(data[row], 'Идентификатор_2'),
+                id_3=get_value_or_none(data[row], 'Идентификатор_3'),
+                id_4=get_value_or_none(data[row], 'Идентификатор_4'),
+                id_5=get_value_or_none(data[row], 'Идентификатор_5'),
                 goods_name= get_value_or_none(data[row],'Название товара'),
                 attr_1 = get_value_or_none(data[row],'Атрибут_1'),
                 attr_2=get_value_or_none(data[row], 'Атрибут_2'),
@@ -58,10 +58,6 @@ async def upload_file(file: UploadFile = File(...), db: Session = Depends(deps.g
                 attr_4=get_value_or_none(data[row], 'Атрибут_4'),
                 attr_5=get_value_or_none(data[row], 'Атрибут_5'),
                 attr_6=get_value_or_none(data[row], 'Атрибут_6'),
-                attr_7=get_value_or_none(data[row], 'Атрибут_7'),
-                attr_8=get_value_or_none(data[row], 'Атрибут_8'),
-                attr_9=get_value_or_none(data[row], 'Атрибут_9'),
-                attr_10=get_value_or_none(data[row], 'Атрибут_10'),
                 is_deleted = 0,is_manual=0, is_add_at = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S'))
             db.add(goods)
             db.commit()
