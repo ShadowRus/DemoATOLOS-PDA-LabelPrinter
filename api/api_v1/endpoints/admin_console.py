@@ -33,7 +33,7 @@ async def get_my_ip(request: Request):
 @router.post("/upload", summary="Загрузка файла с номенклатурой",
              description="Загружаем excel заданного формата")
 async def upload_file(file: UploadFile = File(...), db: Session = Depends(deps.get_db)):
-    try:
+    if 5 ==5:
         # Делаем что-то с загруженным файлом, например, сохраняем его на сервере
         async with aiofiles.open(os.path.join(UPLOAD, file.filename), 'wb') as out_file:
             content = await file.read()  # async read
@@ -59,8 +59,8 @@ async def upload_file(file: UploadFile = File(...), db: Session = Depends(deps.g
             db.commit()
         db.close()
         return {"filename": file.filename}
-    except:
-        return JSONResponse(status_code=500, content={'status': 'Error'})
+    # except:
+    #     return JSONResponse(status_code=500, content={'status': 'Error'})
 
 #--Загрузка файла с номенклатурой
 @router.post("/template", summary="Загружаем шаблон этикетки",
@@ -92,6 +92,21 @@ async def printer(data:PrinterRespone,db: Session = Depends(deps.get_db)):
         return JSONResponse(status_code=200, content={'status': 'Success'})
     except:
         return JSONResponse(status_code=500, content={'status': 'Error'})
+
+@router.get("/goods",summary="Получаем список номенклатуры",
+             description="Возвращает список все номенклатуры из БД ")
+async def goods(db: Session = Depends(deps.get_db)):
+    return db.query(Goods).all()
+
+@router.get("/printers",summary="Получаем список принтеров",
+             description="Возвращает список всех принтеров")
+async def goods(db: Session = Depends(deps.get_db)):
+    return db.query(PrinterService).filter(PrinterService.is_deleted == 0).all()
+
+@router.get("/template",summary="Получаем список этикеток'",
+             description="Возвращает список всех этикеток")
+async def goods(db: Session = Depends(deps.get_db)):
+    return db.query(Template).filter(Template.is_deleted == 0).all()
 
 #----Очистка БД
 @router.get("/clear_db/goods", summary="Очистка БД с данными Номенклатуры",

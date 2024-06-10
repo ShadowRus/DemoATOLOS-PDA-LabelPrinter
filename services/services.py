@@ -92,7 +92,8 @@ def zpl_cmd(host, port, zpl):
 
 def replace_attributes(template, attributes):
     for key, value in attributes.items():
-        template = template.replace(key, str(value))
+        if key != 'id':
+            template = template.replace(key, str(value))
     return template
 
 def object_as_dict(obj):
