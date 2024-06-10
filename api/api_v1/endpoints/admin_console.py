@@ -3,7 +3,7 @@ from fastapi import APIRouter, UploadFile, File, Depends, Request
 from fastapi.responses import JSONResponse
 from models.Goods import Goods
 from models.LabelPrinter import TemplateResponse,Template,PrinterService,PrinterRespone
-
+from services.services import get_value_or_none
 from sqlalchemy.orm import Session
 from api import deps
 
@@ -22,11 +22,7 @@ router = APIRouter()
 now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
 
 
-def get_value_or_none(dictionary, key):
-    if key in dictionary:
-        return dictionary[key]
-    else:
-        return None
+
 
 @router.get("/getmyip", summary="Получить IP4 подключенного устройства",
              description="Реализуем регистрацию устройства")

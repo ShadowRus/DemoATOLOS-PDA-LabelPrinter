@@ -35,3 +35,9 @@ class PrinterRespone(BaseModel):
     port:int= Field(default=9100)
     type:int=Field(default=1)
     is_default: int=Field(default = 0)
+
+class PrinterTask(BaseModel):
+    goods_id:int= Field()
+    printer_id:Optional[int]=None
+    template_id:Optional[int]=None
+    data:Optional[dict]=None
