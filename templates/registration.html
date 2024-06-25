@@ -8,17 +8,14 @@
   <body>
     <img src="/static/assets/images/logo-A.png" alt="Company Logo" class="logo" id="logo">
     <div id="container">
-      <input id="input" type="text" placeholder="Введите название, атрибут или штрихкод товара" />
-      <button id="searchButton">Поиск</button>
-      <p id="scanText">Сканируйте штрихкод товара</p>
+      <input id="input" type="text" placeholder="Введите фамилию участника" />
+      <button id="searchButton">Поиск по Фамилии</button>
+      <p id="scanText">Сканируйте код регистрации или код бейджа участника</p>
       <p id="barcode">...</p>
-
+      <button id="registerButton">Зарегистрировать нового участника</button>
       <ul id="list"></ul>
+      <button id="printButton">Верифицировать</button>
       <button id="backButton">Назад</button>
-      <button id="printButton">Печать</button>
-      <!--
-      <button id="registerButton">Добавить новый товар</button>
-
       <form id="form">
         <label for="surname">Фамилия</label>
         <input id="surname" type="text" name="surname" />
@@ -30,8 +27,7 @@
         <input id="position" type="text" name="position" />
       </form>
       <button id="submitButton">Зарегистрировать</button>
-      -->
     </div>
-    <script src="{{ url_for('static', path='/js/script-T.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/script.js') }}"></script>
   </body>
 </html>

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from api import deps
 import re
-from services.services import decode_or_return
+from services.services import decode_or_return,get_goods_name,BARCODE_API_NAME_GOODS,BARCODE_KEY,BARCODE_API_TOKEN
 
 import datetime
 
@@ -38,8 +38,9 @@ async def search(name:str, db: Session = Depends(deps.get_db)):
                                             (Goods.id_3 == str(name)) |
                                             (Goods.id_4 == str(name)) | (Goods.id_5 == str(name))).all()
     else:
-        name = name.lower()
-        goods_temp = db.query(Goods).filter(func.lower(Goods.goods_name).like(f"%{name}%")).all()
+        #name = name.lower()
+        print(name)
+        goods_temp = db.query(Goods).filter(func.lower(Goods.goods_name).like(f"{name}")).all()
     return goods_temp
 
 # Добавление нового товара
@@ -67,3 +68,9 @@ async def add_goods(goods_data:AddGoodsRespone, db: Session = Depends(deps.get_d
         return goods
     except:
         return JSONResponse(status_code=500, content={'status': 'Error'})
+
+
+@router.get("/web_goods_name",summary="Получение информации о товаре по его штрихкоду",
+             description="Используется платный сторронний сервис BarcodesOlegon")
+def get_name(barcode:str):
+    return get_goods_name(str(BARCODE_API_TOKEN),str(BARCODE_API_NAME_GOODS),str(BARCODE_KEY),str(barcode))

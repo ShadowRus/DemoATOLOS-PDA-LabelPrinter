@@ -7,7 +7,7 @@ import pandas as pd
 
 from decouple import config
 import os
-from services.services import extract_ip
+from services.services_ui import extract_ip
 
 
 SRC_DIR = config('SRC_DIR',default='./src')
@@ -55,18 +55,26 @@ if st.session_state['action'] == 'Удаление':
 if st.session_state['action'] == 'Просмотр':
     st.markdown('### Номенклатура',unsafe_allow_html=True)
     re = requests.get(str(SERVER_URL+'/goods'))
+    re2 = requests.get(str(SERVER_URL + '/goods/meta'))
     j1 = re.json()
     if len(j1) != 0:
         df = pd.DataFrame.from_records(j1)
         df.set_index('id',inplace=True)
         df = df[['goods_name','attr_1','attr_2','id_1','id_2']]
-        df = df.rename(columns={
-            'goods_name': 'Наименование',
-            'attr_1': 'Атрибут 1',
-            'attr_2': 'Атрибут 2',
-            'id_1': 'Штрихкод 1',
-            'id_2': 'Штрихкод 2'
-        })
+
+        if len(re2.json()) != 0:
+            df_meta = pd.DataFrame.from_records(re2.json())
+            df_meta.set_index('id', inplace=True)
+            #st.write(df_meta.loc[df_meta['source'] == 'reg_nov.xlsx', 'goods_name'].values[0])
+
+            df = df.rename(columns={
+                'goods_name': df_meta.loc[df_meta['source'] == 'reg_nov.xlsx', 'goods_name'].values[0],
+                'attr_1': df_meta.loc[df_meta['source'] == 'reg_nov.xlsx', 'attr_1'].values[0],
+                'attr_2': df_meta.loc[df_meta['source'] == 'reg_nov.xlsx', 'attr_2'].values[0],
+                'attr_3': df_meta.loc[df_meta['source'] == 'reg_nov.xlsx', 'attr_3'].values[0],
+                'attr_4': df_meta.loc[df_meta['source'] == 'reg_nov.xlsx', 'attr_4'].values[0],
+                'id_1': df_meta.loc[df_meta['source'] == 'reg_nov.xlsx', 'id_1'].values[0]
+            })
         st.data_editor(df)
 
     st.markdown('### Принтеры',unsafe_allow_html=True)

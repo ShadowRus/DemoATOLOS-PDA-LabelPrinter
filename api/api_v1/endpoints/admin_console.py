@@ -1,7 +1,7 @@
 import asyncio
 from fastapi import APIRouter, UploadFile, File, Depends, Request
 from fastapi.responses import JSONResponse
-from models.Goods import Goods
+from models.Goods import Goods,GoodsId
 from models.LabelPrinter import TemplateResponse,Template,PrinterService,PrinterRespone
 from services.services import get_value_or_none
 from sqlalchemy.orm import Session
@@ -30,6 +30,7 @@ async def get_my_ip(request: Request):
     client_host = request.client.host
     return {"client_host": client_host}
 #--Загрузка файла с номенклатурой
+
 @router.post("/upload", summary="Загрузка файла с номенклатурой",
              description="Загружаем excel заданного формата")
 async def upload_file(file: UploadFile = File(...), db: Session = Depends(deps.get_db)):
@@ -39,7 +40,26 @@ async def upload_file(file: UploadFile = File(...), db: Session = Depends(deps.g
             content = await file.read()  # async read
             await out_file.write(content)
         df = pd.read_excel(os.path.join(UPLOAD, file.filename), engine='openpyxl')
-        data = df.to_dict(orient='index')
+        data_id= df.iloc[0].to_dict()
+        meta = GoodsId(
+            id_1=get_value_or_none(data_id, 'Идентификатор_1'),
+            id_2=get_value_or_none(data_id, 'Идентификатор_2'),
+            id_3=get_value_or_none(data_id, 'Идентификатор_3'),
+            id_4=get_value_or_none(data_id, 'Идентификатор_4'),
+            id_5=get_value_or_none(data_id, 'Идентификатор_5'),
+            goods_name=get_value_or_none(data_id, 'Название товара'),
+            attr_1=get_value_or_none(data_id, 'Атрибут_1'),
+            attr_2=get_value_or_none(data_id, 'Атрибут_2'),
+            attr_3=get_value_or_none(data_id, 'Атрибут_3'),
+            attr_4=get_value_or_none(data_id, 'Атрибут_4'),
+            attr_5=get_value_or_none(data_id, 'Атрибут_5'),
+            attr_6=get_value_or_none(data_id, 'Атрибут_6'),
+            source = str(file.filename),
+            is_add_at=datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S'))
+        db.add(meta)
+        db.commit()
+        db.refresh(meta)
+        data = df.iloc[1:].to_dict(orient='index')
         for row in data:
             goods = Goods(
                 id_1 = get_value_or_none(data[row],'Идентификатор_1'),
@@ -54,6 +74,7 @@ async def upload_file(file: UploadFile = File(...), db: Session = Depends(deps.g
                 attr_4=get_value_or_none(data[row], 'Атрибут_4'),
                 attr_5=get_value_or_none(data[row], 'Атрибут_5'),
                 attr_6=get_value_or_none(data[row], 'Атрибут_6'),
+                source=str(file.filename),
                 is_deleted = 0,is_manual=0, is_add_at = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S'))
             db.add(goods)
             db.commit()
@@ -97,6 +118,11 @@ async def printer(data:PrinterRespone,db: Session = Depends(deps.get_db)):
              description="Возвращает список все номенклатуры из БД ")
 async def goods(db: Session = Depends(deps.get_db)):
     return db.query(Goods).all()
+
+@router.get("/goods/meta",summary="Получаем список мета для номенклатуры",
+             description="Возвращает список все номенклатуры из БД ")
+async def goods(db: Session = Depends(deps.get_db)):
+    return db.query(GoodsId).all()
 
 @router.get("/printers",summary="Получаем список принтеров",
              description="Возвращает список всех принтеров")

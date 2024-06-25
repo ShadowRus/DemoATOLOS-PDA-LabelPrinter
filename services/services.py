@@ -1,15 +1,57 @@
 import base64
 import socket
 from decouple import config
+from services.prename import select_valid_name
 from sqlalchemy.inspection import inspect
-
+import requests
 
 
 SETTIMEOUT = int(config('SETTIMEOUT',default = 2))
 RESET_PRINTER = config('RESET_PRINTER',default='reset_printer')
 SERIAL_NO = config('SERIAL_NO',default='serial_no')
 VENDOR_MODEL = config('VENDOR_MODEL',default='printer_name')
+BARCODE_KEY = config('BARCODE_KEY',default = 'B088819170283097847575868632875')
+BARCODE_API_TOKEN = config('BARCODE_API_TOKEN',default='http://barcodes.olegon.ru/api/card/billing/0/')
+#http://barcodes.olegon.ru/api/card/name/<ШТРИХКОД>/<КЛЮЧ>
+BARCODE_API_NAME_GOODS = config('BARCODE_API_NAME_GOODS',default='http://barcodes.olegon.ru/api/card/name/')
+BARCODE_API_NAME_CLASS = config('BARCODE_API_NAME_CLASS',default='http://barcodes.olegon.ru/api/card/class/')
 
+def check_goods_server_oleg(url,token):
+    re1 = requests.get(url+token)
+    j1 = re1.json()
+    if re1.status_code == 200:
+        if j1['tries'] >= 100:
+            return True
+    return False
+
+def get_goods_name_oleg(url_1,url_2,token,barcode):
+    if check_goods_server_oleg(url_1,token):
+        re1 = requests.get(url_2 + barcode + '/'+ token)
+        if re1.status_code == 200:
+            j1 = re1.json()
+            return j1['names']
+        else:
+            return []
+    else:
+        return []
+
+def get_goods_class_oleg(url_1,url_2,token,barcode):
+    if check_goods_server_oleg(url_1,token):
+        re1 = requests.get(url_2 + barcode + '/'+ token)
+        if re1.status_code == 200:
+            j1 = re1.json()
+            return j1['class']
+        else:
+            return []
+    else:
+        return []
+
+def get_goods_name(url_1,url_2,token,barcode):
+    names = get_goods_name_oleg(url_1,url_2,token,barcode)
+    if names != None:
+        return {"agg_name": select_valid_name(names),
+                "names":names}
+    return {}
 def is_base64(s):
     try:
         # Попробуем декодировать строку base64
@@ -23,8 +65,12 @@ def is_base64(s):
         return False
 
 def decode_or_return(input_str):
-    if is_base64(input_str):
-        return base64.b64decode(input_str).decode('utf-8')
+    # Проверка типа данных перед обработкой
+    if isinstance(input_str, str) and is_base64(input_str):
+        try:
+            return base64.b64decode(input_str).decode('utf-8')
+        except UnicodeDecodeError:
+            return input_str  # Возвращать исходную строку при ошибке декодирования utf-8
     return input_str
 
 def get_value_or_none(dictionary, key):
