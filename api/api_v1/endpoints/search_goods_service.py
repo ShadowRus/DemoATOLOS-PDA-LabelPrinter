@@ -40,7 +40,7 @@ async def search(name:str, db: Session = Depends(deps.get_db)):
     else:
         #name = name.lower()
         print(name)
-        goods_temp = db.query(Goods).filter(func.lower(Goods.goods_name).like(f"{name}")).all()
+        goods_temp = db.query(Goods).filter((Goods.goods_name).like(f"%{name}%")).all()
     return goods_temp
 
 # Добавление нового товара
