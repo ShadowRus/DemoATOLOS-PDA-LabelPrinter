@@ -10,8 +10,9 @@ import os
 from services.services_ui import extract_ip
 
 
+PORT = config('PORT',default = 8000)
 SRC_DIR = config('SRC_DIR',default='./src')
-SERVER_URL = 'http://'+str(extract_ip())+':'+str(8000)
+SERVER_URL = 'http://'+str(extract_ip())+':'+str(PORT)
 st.image(os.path.join(SRC_DIR,'Logo_cyrillic_red.png'))
 ####------
 def upload_file(file):

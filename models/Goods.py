@@ -58,3 +58,6 @@ class AddGoodsRespone(BaseModel):
     attr_5:Optional[str]=None
     attr_6:Optional[str]=None
 
+
+class BarcodeRequest(BaseModel):
+    code: str

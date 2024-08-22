@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СЕМАТ_2024</title>
+    <link rel="manifest" href="static/assets/manifest.json">
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start; /* Поднимаем элементы к верхнему краю */
+        height: 100vh;
+        margin: 0;
+        padding: 10px;
+        box-sizing: border-box; /* Учитываем отступы в размер */
+    }
+    .container {
+        width: 90%;
+        max-width: 350px;
+        margin: 0 auto;
+    }
+    .scan-text {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px; /* Отступ сверху */
+            margin-bottom: 20px; /* Отступ снизу */
+        }
+    .logo, .welcome-text {
+        text-align: center;
+        margin-bottom: 15px;
+        margin-top: 20px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group input, .form-group button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-top: 10px;
+        box-sizing: border-box;
+        border: 2px solid red; /* Красная рамка */
+        border-radius: 20px; /* Скругленные углы */
+    }
+    .hidden {
+        display: none;
+    }
+    #gameContent, #endScreen {
+        display: none;
+    }
+    #popup {
+        position: fixed;
+        top: 50%; /* Центрирование по вертикали */
+        left: 50%; /* Центрирование по горизонтали */
+        transform: translate(-50%, -50%); /* Смещение в центр */
+        width: 90%; /* На 90% ширины экрана */
+        height: 75%; /* Половина экрана */
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: none;
+        text-align: center; /* Центрирование текста */
+        margin: 0 auto;
+        border: 2px solid red; /* Красная рамка */
+    }
+    #popupText {
+        margin-bottom: 20px;
+    }
+    .popup-btn {
+        width: 90%; /* На всю ширину экрана */
+        height: 80px; /* Высота кнопок */
+        font-size: 22px; /* Размер шрифта */
+        padding: 20px; /* Внутренние отступы */
+        margin: 10px 0; /* Внешние отступы сверху и снизу */
+        box-sizing: border-box; /* Учитываем отступы в размер */
+        border: 2px solid red; /* Красная рамка */
+        border-radius: 20px; /* Скругленные углы */
+    }
+    #timer {
+        font-size: 24px;
+        font-weight: bold;
+        color: red;
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px; /* Отступ снизу */
+    }
+    #endScreen {
+        display: none; /* Скрываем экран завершения игры */
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+</style>
+
+
+</head>
+<body>
+    <!-- Экран регистрации -->
+    <div id="loginScreen" class="container">
+        <div class="logo">
+            <img src="/static/assets/images/logo-A.png" alt="Logo 1">
+            <!--<img src="/static/assets/images/img.png" alt="Logo 2">-->
+        </div>
+        <div class="welcome-text">
+            Добро пожаловать в игру
+        </div>
+        <div class="form-group">
+            <input type="text" id="surname" placeholder="Фамилия">
+        </div>
+        <div class="form-group">
+            <input type="text" id="name" placeholder="Имя">
+        </div>
+        <div class="form-group">
+            <input type="text" id="organization" placeholder="Организация">
+        </div>
+        <div class="form-group">
+            <button id="registerBtn">Зарегистрироваться</button>
+        </div>
+        <div class="logo">
+            <img src="/static/assets/images/img.png" alt="Logo 2">
+        </div>
+    </div>
+
+    <!-- Экран игры -->
+    <div id="gameContent" class="container">
+        <div class="logo">
+            <img src="/static/assets/images/logo-A.png" alt="Logo 1">
+            <!--<img src="/static/assets/images/img.png" alt="Logo 2">-->
+        </div>
+        <div class="info">
+            <div id="playerName" style="float:right;"></div>
+            <div id="count"></div>
+        </div>
+        <div class="scan-text">
+            Сканируйте коды и ищите соответсвия
+        </div>
+        <div id="popup">
+            <div id="popupText"></div>
+            <div>
+                <button id="yesBtn" class="popup-btn">Да</button>
+                <button id="noBtn" class="popup-btn">Нет</button>
+            </div>
+        </div>
+        <div id="timer" style="text-align: center; margin-top: 20px;"></div>
+        <div class="logo">
+            <img src="/static/assets/images/img.png" alt="Logo 2">
+        </div>
+    </div>
+
+    <!-- Экран завершения игры -->
+    <div id="endScreen" class="container">
+        <div class="logo">
+            <img src="/static/assets/images/logo-A.png" alt="Logo 1">
+        </div>
+        <div id="endMessage"></div>
+        <div class="logo">
+            <img src="/static/assets/images/img.png" alt="Logo 2">
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('static/js/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+
+    <script src="{{ url_for('static', path='/js/app.js') }}"></script>
+</body>
+</html>

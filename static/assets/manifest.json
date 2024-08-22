@@ -1,0 +1,15 @@
+{
+    "short_name": "СЕМАТ",
+    "name": "СЕМАТ 2024",
+    "start_url": "/semat",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "img.png",
+            "type": "image/png",
+            "sizes": "600x330"
+        }
+    ]
+}

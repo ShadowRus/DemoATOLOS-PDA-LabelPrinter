@@ -1,0 +1,22 @@
+{
+  "type": "registration",
+  "source": ["partners","emloyers"],
+  "data": [
+    {"source":"check_list"}
+  ],
+  "action": [
+    {"find": [
+      "source_1.attr_1","source_1.attr_2","source_1.goodsname"
+    ]},
+    {"change": [
+        {"doc_attr_1": "CheckIn"},
+        {"doc_attr_2": "inc+"},
+        {"doc_attr_3": "input"}
+      ]},
+    {"print": [
+      {"label_template":["demo_1"]},
+      {"printer": ["demo_printer"]}
+    ]},
+    {"export":["xlsx"]}
+  ]
+}
